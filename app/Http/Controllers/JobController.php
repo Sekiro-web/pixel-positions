@@ -69,9 +69,4 @@ class JobController extends Controller
     {
         return redirect('/');
     }
-
-    public function search()
-    {
-        return '';
-    }
 }
