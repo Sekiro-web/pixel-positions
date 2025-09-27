@@ -31,8 +31,8 @@ class JobController extends Controller
         return view('Jobs.create', ['tags' => Tag::all()]);
     }
 
-    public function store(Request $request) {
-
+    public function store(Request $request)
+    {
         $attributes = $request->validate([
             'title' => ['required'],
             'salary' => ['required'],
@@ -46,12 +46,27 @@ class JobController extends Controller
 
         $job = Auth::user()->employer->jobs()->create(Arr::except($attributes, 'tags'));
 
-        if($attributes['tags'] ?? false){
-            foreach(explode(',', $attributes['tags']) as $tag){
+        if ($attributes['tags'] ?? false) {
+            foreach (explode(',', $attributes['tags']) as $tag) {
                 $job->tag($tag);
             }
         }
 
+        return redirect('/');
+    }
+
+    public function edit(Job $job)
+    {
+        return view('Jobs.edit', ['job' => $job]);
+    }
+
+    public function update(Request $request)
+    {
+        return redirect('/');
+    }
+
+    public function destroy(Job $job)
+    {
         return redirect('/');
     }
 
