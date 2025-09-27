@@ -3,8 +3,8 @@
 
     <x-forms.form action="{{ route('job.store') }}" method="POST">
 
-        <x-forms.input label="Title" name="title" plsceholder="Job Title" />
-        <x-forms.input label="Salary" name="salary" type="number" placeholder="Salary" />
+        <x-forms.input label="Title" name="title" placeholder="Job Title" />
+        <x-forms.input label="Salary" name="salary" placeholder="Salary" />
         <x-forms.input label="Location" name="location" placeholder="Job location" />
 
         <x-forms.select label="scheduale" name="scheduale">

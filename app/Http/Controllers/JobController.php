@@ -34,12 +34,12 @@ class JobController extends Controller
     public function store(Request $request)
     {
         $attributes = $request->validate([
-            'title' => ['required'],
-            'salary' => ['required'],
-            'location' => ['required'],
+            'title' => ['required', 'string', 'max:255'],
+            'salary' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string', 'max:255'],
             'scheduale' => ['required', Rule::in(['Full Time', 'Part Time'])],
-            'url' => ['required', 'active_url'],
-            'tags' => ['nullable'],
+            'url' => ['required', 'active_url', 'max:255'],
+            'tags' => ['nullable', 'string']
         ]);
 
         $attributes['featured'] = $request->has('featured');
@@ -57,16 +57,48 @@ class JobController extends Controller
 
     public function edit(Job $job)
     {
-        return view('Jobs.edit', ['job' => $job]);
+        $tagNames = $job->tags->pluck('name')->implode(',');
+
+        return view('Jobs.edit', [
+            'job' => $job,
+            'tagNames' => $tagNames
+        ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, Job $job)
     {
+        try {
+            $attributes = $request->validate([
+                'title' => ['required', 'string', 'max:255'],
+                'salary' => ['required', 'string', 'max:255'],
+                'location' => ['required', 'string', 'max:255'],
+                'scheduale' => ['required', Rule::in(['Full Time', 'Part Time'])],
+                'url' => ['required', 'active_url', 'max:255'],
+                'tags' => ['nullable', 'string']
+            ]);
+
+            $attributes['featured'] = $request->boolean('featured');
+
+            $job->update(Arr::except($attributes, 'tags'));
+
+            $job->tags()->detach();
+
+            if ($attributes['tags'] ?? false) {
+                foreach (explode(',', $attributes['tags']) as $tag) {
+                    $job->tag(trim($tag));
+                }
+            }
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+
         return redirect('/');
     }
 
     public function destroy(Job $job)
     {
+        $job->delete();
+
         return redirect('/');
     }
 }
